@@ -151,6 +151,11 @@ const model = ref([
                 to: '/pages/crud'
             },
             {
+                label: 'Pacientes',
+                icon: 'pi pi-fw pi-user-plus',
+                to: '/pages/patients'
+            },
+            {
                 label: 'Not Found',
                 icon: 'pi pi-fw pi-exclamation-circle',
                 to: '/pages/notfound'
