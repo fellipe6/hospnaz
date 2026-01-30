@@ -1,10 +1,37 @@
 <script setup>
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
+import { AuthService } from '@/service/AuthService';
+import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const toast = useToast();
+const authService = new AuthService();
 
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
+const loading = ref(false);
+
+const onLogin = () => {
+    if (!email.value || !password.value) {
+        toast.add({ severity: 'warn', summary: 'Campos obrigatórios', detail: 'Informe email e senha', life: 3000 });
+        return;
+    }
+
+    loading.value = true;
+    authService.login(email.value, password.value)
+        .then(() => {
+            router.push('/');
+        })
+        .catch((err) => {
+            toast.add({ severity: 'error', summary: 'Erro de Login', detail: err, life: 3000 });
+        })
+        .finally(() => {
+            loading.value = false;
+        });
+};
 </script>
 
 <template>
@@ -13,6 +40,7 @@ const checked = ref(false);
         <div class="flex flex-col items-center justify-center">
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-20" style="border-radius: 53px">
+                    <Toast />
                     <div class="text-center mb-8">
                         <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="mb-8 w-16 shrink-0 mx-auto">
                             <path
@@ -49,7 +77,7 @@ const checked = ref(false);
                             </div>
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                         </div>
-                        <Button label="Sign In" class="w-full" as="router-link" to="/"></Button>
+                        <Button label="Acessar Sistema" class="w-full" :loading="loading" @click="onLogin"></Button>
                     </div>
                 </div>
             </div>

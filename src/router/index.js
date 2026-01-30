@@ -1,6 +1,10 @@
 import AppLayout from '@/layout/AppLayout.vue';
+import { AuthService } from '@/service/AuthService';
 import { createRouter, createWebHistory } from 'vue-router';
 import almoxarifadoRoutes from './almoxarifado.routes';
+import pepRoutes from './pep.routes';
+
+const authService = new AuthService();
 
 const router = createRouter({
     history: createWebHistory(),
@@ -10,6 +14,7 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 ...almoxarifadoRoutes,
+                ...pepRoutes,
                 {
                     path: '/',
                     name: 'dashboard',
@@ -115,6 +120,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/Patients.vue')
                 },
                 {
+                    path: '/pages/patients/:id',
+                    name: 'patient-detail',
+                    component: () => import('@/views/pages/PatientDetail.vue')
+                },
+                {
                     path: '/pages/companies',
                     name: 'companies',
                     component: () => import('@/views/pages/Companies.vue')
@@ -158,6 +168,22 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Error.vue')
         }
     ]
+});
+
+router.beforeEach((to, from, next) => {
+    const publicPages = ['/auth/login', '/auth/error', '/auth/access', '/landing'];
+    const authRequired = !publicPages.includes(to.path);
+    const loggedIn = authService.isAuthenticated();
+
+    if (authRequired && !loggedIn) {
+        return next('/auth/login');
+    }
+
+    if (to.path === '/auth/login' && loggedIn) {
+        return next('/');
+    }
+
+    next();
 });
 
 export default router;

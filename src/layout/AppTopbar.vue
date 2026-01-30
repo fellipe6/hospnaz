@@ -1,8 +1,24 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
+import { AuthService } from '@/service/AuthService';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import AppConfigurator from './AppConfigurator.vue';
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+const authService = new AuthService();
+const router = useRouter();
+
+const user = ref(null);
+
+onMounted(() => {
+    user.value = authService.getUser();
+});
+
+const onLogout = () => {
+    authService.logout();
+    router.push('/auth/login');
+};
 </script>
 
 <template>
@@ -68,9 +84,16 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                         <i class="pi pi-inbox"></i>
                         <span>Messages</span>
                     </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-user"></i>
-                        <span>Profile</span>
+                    <div class="flex items-center gap-2 px-3 py-2">
+                        <i class="pi pi-user text-primary"></i>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-sm">{{ user?.nome }}</span>
+                            <span class="text-xs text-muted-color">{{ user?.role }}</span>
+                        </div>
+                    </div>
+                    <button type="button" class="layout-topbar-action" @click="onLogout">
+                        <i class="pi pi-sign-out"></i>
+                        <span>Sair</span>
                     </button>
                 </div>
             </div>

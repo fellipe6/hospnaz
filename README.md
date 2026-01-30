@@ -7,13 +7,27 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 ### Módulo de Pacientes
 - ✅ Cadastro completo de pacientes
 - ✅ Listagem com busca e filtros
-- ✅ Edição e exclusão de registros
+- ✅ **Visualização detalhada** em nova tela dedicada 👁️
+- ✅ **Edição rápida** via modal integrada
 - ✅ Exportação para CSV
 - ✅ Validação de campos obrigatórios
 - ✅ Máscaras automáticas para CPF, telefone e CEP
 - ✅ **Busca automática de endereço por CEP** (integração com ViaCEP)
 - ✅ **Captura de foto via Webcam** 📸
 - ✅ **Agendamento** com calendário interativo
+
+### Módulo PEP (Prontuário Eletrônico)
+- ✅ Lista de atendimentos com filtros
+- ✅ Prontuário detalhado com Sinais Vitais
+- ✅ Seções de Evolução, Diagnóstico (CID-10) e Prescrição
+- ✅ Fluxo de finalização e bloqueio de edição
+
+## 🔐 Credenciais de Acesso (Mock)
+
+| Perfil | E-mail | Senha | Acesso |
+| :--- | :--- | :--- | :--- |
+| **Super Usuário** | `admin@hospnaz.com.br` | `admin123` | Total (Admin) |
+| **Médico** | `medico@hospnaz.com.br` | `medico123` | Pacientes, Agendamento e PEP |
 
 ### Módulo de Almoxarifado
 - ✅ Dashboard com indicadores de estoque (KPIs)

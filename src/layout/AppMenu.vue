@@ -1,287 +1,80 @@
 <script setup>
-import { ref } from 'vue';
+import { AuthService } from '@/service/AuthService';
+import { ROLE_ADMIN, ROLE_DOCTOR } from '@/service/mock/usuarios.mock';
+import { computed, ref } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
 
-const model = ref([
+const authService = new AuthService();
+const userRole = authService.getUserRole();
+
+const fullModel = ref([
     {
         label: 'Home',
         items: [
             {
                 label: 'Dashboard',
                 icon: 'pi pi-fw pi-home',
-                to: '/'
+                to: '/',
+                roles: [ROLE_ADMIN, ROLE_DOCTOR]
             }
         ]
     },
     {
-        label: 'UI Components',
-        path: '/uikit',
+        label: 'Gestão Hospitalar',
         items: [
-            {
-                label: 'Form Layout',
-                icon: 'pi pi-fw pi-id-card',
-                to: '/uikit/formlayout'
-            },
-            {
-                label: 'Input',
-                icon: 'pi pi-fw pi-check-square',
-                to: '/uikit/input'
-            },
-            {
-                label: 'Button',
-                icon: 'pi pi-fw pi-mobile',
-                to: '/uikit/button',
-                class: 'rotated-icon'
-            },
-            {
-                label: 'Table',
-                icon: 'pi pi-fw pi-table',
-                to: '/uikit/table'
-            },
-            {
-                label: 'List',
-                icon: 'pi pi-fw pi-list',
-                to: '/uikit/list'
-            },
-            {
-                label: 'Tree',
-                icon: 'pi pi-fw pi-share-alt',
-                to: '/uikit/tree'
-            },
-            {
-                label: 'Panel',
-                icon: 'pi pi-fw pi-tablet',
-                to: '/uikit/panel'
-            },
-            {
-                label: 'Overlay',
-                icon: 'pi pi-fw pi-clone',
-                to: '/uikit/overlay'
-            },
-            {
-                label: 'Media',
-                icon: 'pi pi-fw pi-image',
-                to: '/uikit/media'
-            },
-            {
-                label: 'Menu',
-                icon: 'pi pi-fw pi-bars',
-                to: '/uikit/menu'
-            },
-            {
-                label: 'Message',
-                icon: 'pi pi-fw pi-comment',
-                to: '/uikit/message'
-            },
-            {
-                label: 'File',
-                icon: 'pi pi-fw pi-file',
-                to: '/uikit/file'
-            },
-            {
-                label: 'Chart',
-                icon: 'pi pi-fw pi-chart-bar',
-                to: '/uikit/charts'
-            },
-            {
-                label: 'Timeline',
-                icon: 'pi pi-fw pi-calendar',
-                to: '/uikit/timeline'
-            },
-            {
-                label: 'Misc',
-                icon: 'pi pi-fw pi-circle',
-                to: '/uikit/misc'
-            }
-        ]
-    },
-    {
-        label: 'Prime Blocks',
-        icon: 'pi pi-fw pi-prime',
-        path: '/blocks',
-        items: [
-            {
-                label: 'Free Blocks',
-                icon: 'pi pi-fw pi-eye',
-                to: '/blocks/free'
-            },
-            {
-                label: 'All Blocks',
-                icon: 'pi pi-fw pi-globe',
-                url: 'https://blocks.primevue.org/',
-                target: '_blank'
-            }
-        ]
-    },
-    {
-        label: 'Pages',
-        icon: 'pi pi-fw pi-briefcase',
-        path: '/pages',
-        items: [
-            {
-                label: 'Landing',
-                icon: 'pi pi-fw pi-globe',
-                to: '/landing'
-            },
-            {
-                label: 'Auth',
-                icon: 'pi pi-fw pi-user',
-                path: '/auth',
-                items: [
-                    {
-                        label: 'Login',
-                        icon: 'pi pi-fw pi-sign-in',
-                        to: '/auth/login'
-                    },
-                    {
-                        label: 'Error',
-                        icon: 'pi pi-fw pi-times-circle',
-                        to: '/auth/error'
-                    },
-                    {
-                        label: 'Access Denied',
-                        icon: 'pi pi-fw pi-lock',
-                        to: '/auth/access'
-                    }
-                ]
-            },
-            {
-                label: 'Crud',
-                icon: 'pi pi-fw pi-pencil',
-                to: '/pages/crud'
-            },
             {
                 label: 'Pacientes',
                 icon: 'pi pi-fw pi-user-plus',
-                to: '/pages/patients'
+                to: '/pages/patients',
+                roles: [ROLE_ADMIN, ROLE_DOCTOR]
             },
             {
                 label: 'Empresas',
                 icon: 'pi pi-fw pi-building',
-                to: '/pages/companies'
+                to: '/pages/companies',
+                roles: [ROLE_ADMIN]
             },
             {
                 label: 'Agendamento',
                 icon: 'pi pi-fw pi-calendar',
-                to: '/pages/scheduling'
+                to: '/pages/scheduling',
+                roles: [ROLE_ADMIN, ROLE_DOCTOR]
             },
             {
-                label: 'Not Found',
-                icon: 'pi pi-fw pi-exclamation-circle',
-                to: '/pages/notfound'
-            },
-            {
-                label: 'Empty',
-                icon: 'pi pi-fw pi-circle-off',
-                to: '/pages/empty'
+                label: 'PEP (Prontuário)',
+                icon: 'pi pi-fw pi-copy',
+                to: '/pep',
+                roles: [ROLE_ADMIN, ROLE_DOCTOR]
             }
         ]
     },
     {
         label: 'Almoxarifado',
+        roles: [ROLE_ADMIN],
         items: [
-            { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/pages/almoxarifado/dashboard' },
-            { label: 'Produtos', icon: 'pi pi-fw pi-box', to: '/pages/almoxarifado/produtos' },
-            { label: 'Movimentações', icon: 'pi pi-fw pi-sort-alt', to: '/pages/almoxarifado/movimentacoes' },
-            { label: 'Fornecedores', icon: 'pi pi-fw pi-truck', to: '/pages/almoxarifado/fornecedores' },
-            { label: 'Estoque Crítico', icon: 'pi pi-fw pi-exclamation-circle', to: '/pages/almoxarifado/estoque-minimo' }
-        ]
-    },
-    {
-        label: 'Hierarchy',
-        icon: 'pi pi-fw pi-align-left',
-        path: '/hierarchy',
-        items: [
-            {
-                label: 'Submenu 1',
-                icon: 'pi pi-fw pi-align-left',
-                path: '/submenu_1',
-                items: [
-                    {
-                        label: 'Submenu 1.1',
-                        icon: 'pi pi-fw pi-align-left',
-                        path: '/submenu_1_1',
-                        items: [
-                            {
-                                label: 'Submenu 1.1.1',
-                                icon: 'pi pi-fw pi-align-left'
-                            },
-                            {
-                                label: 'Submenu 1.1.2',
-                                icon: 'pi pi-fw pi-align-left'
-                            },
-                            {
-                                label: 'Submenu 1.1.3',
-                                icon: 'pi pi-fw pi-align-left'
-                            }
-                        ]
-                    },
-                    {
-                        label: 'Submenu 1.2',
-                        icon: 'pi pi-fw pi-align-left',
-                        path: '/submenu_1_2',
-                        items: [
-                            {
-                                label: 'Submenu 1.2.1',
-                                icon: 'pi pi-fw pi-align-left'
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                label: 'Submenu 2',
-                icon: 'pi pi-fw pi-align-left',
-                path: '/submenu_2',
-                items: [
-                    {
-                        label: 'Submenu 2.1',
-                        icon: 'pi pi-fw pi-align-left',
-                        path: '/submenu_2_1',
-                        items: [
-                            {
-                                label: 'Submenu 2.1.1',
-                                icon: 'pi pi-fw pi-align-left'
-                            },
-                            {
-                                label: 'Submenu 2.1.2',
-                                icon: 'pi pi-fw pi-align-left'
-                            }
-                        ]
-                    },
-                    {
-                        label: 'Submenu 2.2',
-                        icon: 'pi pi-fw pi-align-left',
-                        path: '/submenu_2_2',
-                        items: [
-                            {
-                                label: 'Submenu 2.2.1',
-                                icon: 'pi pi-fw pi-align-left'
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        label: 'Get Started',
-        path: '/start',
-        items: [
-            {
-                label: 'Documentation',
-                icon: 'pi pi-fw pi-book',
-                to: '/start/documentation'
-            },
-            {
-                label: 'View Source',
-                icon: 'pi pi-fw pi-github',
-                url: 'https://github.com/primefaces/sakai-vue',
-                target: '_blank'
-            }
+            { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/pages/almoxarifado/dashboard', roles: [ROLE_ADMIN] },
+            { label: 'Produtos', icon: 'pi pi-fw pi-box', to: '/pages/almoxarifado/produtos', roles: [ROLE_ADMIN] },
+            { label: 'Movimentações', icon: 'pi pi-fw pi-sort-alt', to: '/pages/almoxarifado/movimentacoes', roles: [ROLE_ADMIN] },
+            { label: 'Fornecedores', icon: 'pi pi-fw pi-truck', to: '/pages/almoxarifado/fornecedores', roles: [ROLE_ADMIN] },
+            { label: 'Estoque Crítico', icon: 'pi pi-fw pi-exclamation-circle', to: '/pages/almoxarifado/estoque-minimo', roles: [ROLE_ADMIN] }
         ]
     }
 ]);
+
+const model = computed(() => {
+    return fullModel.value
+        .filter((node) => !node.roles || node.roles.includes(userRole))
+        .map((node) => {
+            if (node.items) {
+                return {
+                    ...node,
+                    items: node.items.filter((item) => !item.roles || item.roles.includes(userRole))
+                };
+            }
+            return node;
+        })
+        .filter((node) => !node.items || node.items.length > 0);
+});
 </script>
 
 <template>

@@ -3,12 +3,14 @@ import { PatientService } from '@/service/PatientService';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
 import { nextTick, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 onMounted(() => {
     PatientService.getPatients().then((data) => (patients.value = data));
 });
 
 const toast = useToast();
+const router = useRouter();
 const dt = ref();
 const patients = ref();
 const patientDialog = ref(false);
@@ -20,6 +22,7 @@ const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 const submitted = ref(false);
+const isViewMode = ref(false);
 const statuses = ref([
     { label: 'Ativo', value: 'active' },
     { label: 'Inativo', value: 'inactive' }
@@ -32,6 +35,7 @@ function openNew() {
         address: {}
     };
     submitted.value = false;
+    isViewMode.value = false;
     patientDialog.value = true;
 }
 
@@ -60,8 +64,24 @@ function savePatient() {
     }
 }
 
+function viewPatient(pat) {
+    router.push(`/pages/patients/${pat.id}`);
+}
+
 function editPatient(pat) {
     patient.value = { ...pat };
+    
+    // Converte string de data para objeto Date para o DatePicker
+    if (patient.value.dateOfBirth) {
+        patient.value.dateOfBirth = new Date(patient.value.dateOfBirth);
+    }
+    
+    // Mapeia o status de string para o objeto esperado pelo Select (ou usa optionValue no template)
+    if (patient.value.status && typeof patient.value.status === 'string') {
+        patient.value.status = statuses.value.find(s => s.value === patient.value.status) || patient.value.status;
+    }
+
+    isViewMode.value = false;
     patientDialog.value = true;
 }
 
@@ -296,8 +316,7 @@ function takePhoto() {
         <div class="card">
             <Toolbar class="mb-6">
                 <template #start>
-                    <Button label="Novo Paciente" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-                    <Button label="Excluir" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected" :disabled="!selectedPatients || !selectedPatients.length" />
+                    <Button label="Novo Paciente" icon="pi pi-plus" severity="secondary" @click="openNew" />
                 </template>
 
                 <template #end>
@@ -330,6 +349,12 @@ function takePhoto() {
                 </template>
 
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
+                <Column header="Ações" :exportable="false" style="min-width: 10rem">
+                    <template #body="slotProps">
+                        <Button icon="pi pi-eye" outlined rounded class="mr-2" @click="viewPatient(slotProps.data)" v-tooltip.top="'Visualizar'" />
+                        <Button icon="pi pi-pencil" outlined rounded severity="success" @click="editPatient(slotProps.data)" v-tooltip.top="'Editar'" />
+                    </template>
+                </Column>
                 <Column field="name" header="Nome" sortable style="min-width: 16rem"></Column>
                 <Column field="cpf" header="CPF" sortable style="min-width: 12rem"></Column>
                 <Column field="dateOfBirth" header="Data de Nascimento" sortable style="min-width: 12rem">
@@ -344,16 +369,10 @@ function takePhoto() {
                         <Tag :value="getStatusText(slotProps.data.status)" :severity="getStatusLabel(slotProps.data.status)" />
                     </template>
                 </Column>
-                <Column :exportable="false" style="min-width: 12rem">
-                    <template #body="slotProps">
-                        <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editPatient(slotProps.data)" />
-                        <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeletePatient(slotProps.data)" />
-                    </template>
-                </Column>
             </DataTable>
         </div>
 
-        <Dialog v-model:visible="patientDialog" :style="{ width: '650px' }" header="Dados do Paciente" :modal="true">
+        <Dialog v-model:visible="patientDialog" :style="{ width: '650px' }" :header="isViewMode ? 'Visualizar Paciente' : 'Manutenção de Paciente'" :modal="true">
             <div class="flex flex-col gap-6">
                 <!-- Foto do Paciente -->
                 <div class="flex flex-col items-center gap-4 mb-4">
@@ -378,25 +397,26 @@ function takePhoto() {
                             class="absolute -bottom-3 -right-3 w-10 h-10 shadow-md z-10" 
                             @click="openCamera"
                             v-tooltip="'Tirar Foto'"
+                            v-if="!isViewMode"
                         />
                     </div>
                 </div>
 
                 <div>
                     <label for="name" class="block font-bold mb-3">Nome Completo *</label>
-                    <InputText id="name" v-model.trim="patient.name" required="true" autofocus :invalid="submitted && !patient.name" fluid />
+                    <InputText id="name" v-model.trim="patient.name" required="true" autofocus :invalid="submitted && !patient.name" :disabled="isViewMode" fluid />
                     <small v-if="submitted && !patient.name" class="text-red-500">Nome é obrigatório.</small>
                 </div>
 
                 <div class="grid grid-cols-12 gap-4">
                     <div class="col-span-6">
                         <label for="cpf" class="block font-bold mb-3">CPF *</label>
-                        <InputText id="cpf" v-model="patient.cpf" @input="patient.cpf = applyCpfMask($event.target.value)" required="true" :invalid="submitted && !patient.cpf" placeholder="000.000.000-00" fluid />
+                        <InputText id="cpf" v-model="patient.cpf" @input="patient.cpf = applyCpfMask($event.target.value)" required="true" :invalid="submitted && !patient.cpf" placeholder="000.000.000-00" :disabled="isViewMode" fluid />
                         <small v-if="submitted && !patient.cpf" class="text-red-500">CPF é obrigatório.</small>
                     </div>
                     <div class="col-span-6">
                         <label for="dateOfBirth" class="block font-bold mb-3">Data de Nascimento *</label>
-                        <DatePicker id="dateOfBirth" v-model="patient.dateOfBirth" dateFormat="dd/mm/yy" :invalid="submitted && !patient.dateOfBirth" fluid />
+                        <DatePicker id="dateOfBirth" v-model="patient.dateOfBirth" dateFormat="dd/mm/yy" :invalid="submitted && !patient.dateOfBirth" :disabled="isViewMode" fluid />
                         <small v-if="submitted && !patient.dateOfBirth" class="text-red-500">Data de nascimento é obrigatória.</small>
                     </div>
                 </div>
@@ -404,17 +424,17 @@ function takePhoto() {
                 <div class="grid grid-cols-12 gap-4">
                     <div class="col-span-6">
                         <label for="phone" class="block font-bold mb-3">Telefone</label>
-                        <InputText id="phone" v-model="patient.phone" @input="patient.phone = applyPhoneMask($event.target.value)" placeholder="(00) 00000-0000" fluid />
+                        <InputText id="phone" v-model="patient.phone" @input="patient.phone = applyPhoneMask($event.target.value)" placeholder="(00) 00000-0000" :disabled="isViewMode" fluid />
                     </div>
                     <div class="col-span-6">
                         <label for="email" class="block font-bold mb-3">Email</label>
-                        <InputText id="email" v-model="patient.email" type="email" fluid />
+                        <InputText id="email" v-model="patient.email" type="email" :disabled="isViewMode" fluid />
                     </div>
                 </div>
 
                 <div>
                     <label for="status" class="block font-bold mb-3">Status</label>
-                    <Select id="status" v-model="patient.status" :options="statuses" optionLabel="label" placeholder="Selecione um Status" fluid></Select>
+                    <Select id="status" v-model="patient.status" :options="statuses" optionLabel="label" optionValue="value" placeholder="Selecione um Status" :disabled="isViewMode" fluid></Select>
                 </div>
 
                 <div class="border-t pt-4">
@@ -422,41 +442,41 @@ function takePhoto() {
 
                     <div class="mb-4">
                         <label for="zip" class="block font-bold mb-3">CEP</label>
-                        <InputText id="zip" v-model="patient.address.zip" @input="patient.address.zip = applyZipMask($event.target.value)" @blur="fetchAddressByCep" placeholder="00000-000" fluid />
+                        <InputText id="zip" v-model="patient.address.zip" @input="patient.address.zip = applyZipMask($event.target.value)" @blur="fetchAddressByCep" placeholder="00000-000" :disabled="isViewMode" fluid />
                     </div>
 
                     <div class="grid grid-cols-12 gap-4 mb-4">
                         <div class="col-span-8">
                             <label for="street" class="block font-bold mb-3">Rua</label>
-                            <InputText id="street" v-model="patient.address.street" fluid />
+                            <InputText id="street" v-model="patient.address.street" :disabled="isViewMode" fluid />
                         </div>
                         <div class="col-span-4">
                             <label for="number" class="block font-bold mb-3">Número</label>
-                            <InputText id="number" v-model="patient.address.number" fluid />
+                            <InputText id="number" v-model="patient.address.number" :disabled="isViewMode" fluid />
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label for="complement" class="block font-bold mb-3">Complemento</label>
-                        <InputText id="complement" v-model="patient.address.complement" fluid />
+                        <InputText id="complement" v-model="patient.address.complement" :disabled="isViewMode" fluid />
                     </div>
 
                     <div class="grid grid-cols-12 gap-4">
                         <div class="col-span-8">
                             <label for="city" class="block font-bold mb-3">Cidade</label>
-                            <InputText id="city" v-model="patient.address.city" fluid />
+                            <InputText id="city" v-model="patient.address.city" :disabled="isViewMode" fluid />
                         </div>
                         <div class="col-span-4">
                             <label for="state" class="block font-bold mb-3">Estado</label>
-                            <Select id="state" v-model="patient.address.state" :options="brazilianStates" placeholder="UF" fluid></Select>
+                            <Select id="state" v-model="patient.address.state" :options="brazilianStates" placeholder="UF" :disabled="isViewMode" fluid></Select>
                         </div>
                     </div>
                 </div>
             </div>
 
             <template #footer>
-                <Button label="Cancelar" icon="pi pi-times" text @click="hideDialog" />
-                <Button label="Salvar" icon="pi pi-check" @click="savePatient" />
+                <Button :label="isViewMode ? 'Fechar' : 'Cancelar'" icon="pi pi-times" text @click="hideDialog" />
+                <Button label="Salvar" icon="pi pi-check" @click="savePatient" v-if="!isViewMode" />
             </template>
         </Dialog>
 

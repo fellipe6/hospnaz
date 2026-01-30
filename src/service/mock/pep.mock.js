@@ -1,0 +1,50 @@
+export const PEP_MOCK = [
+    {
+        id: 1,
+        agendamentoId: 1,
+        pacienteId: 1,
+        profissionalId: 1,
+        dataHora: '2026-01-20T08:30:00',
+        status: 'Finalizado',
+        queixaPrincipal: 'Cansaço constante e dores de cabeça.',
+        historiaDoencaAtual: 'Paciente relata início dos sintomas há 2 semanas, piorando no período da tarde.',
+        antecedentes: 'Hipertensa, uso de Losartana 50mg.',
+        sinaisVitais: {
+            pa: '130x80 mmHg',
+            temp: '36.5°C',
+            fc: '72 bpm',
+            fr: '18 irpm',
+            spo2: '98%'
+        },
+        evolucao: 'Estado geral bom, acianótica, anictérica.',
+        diagnostico: { cid: 'R51', descricao: 'Cefaleia' },
+        conduta: 'Solicitado hemograma e retorno em 15 dias.',
+        prescricao: 'Dipirona 1g se dor.',
+        observacoes: 'Paciente orientada sobre sinais de alerta.',
+        assinatura: 'Dr. Ricardo Santos'
+    },
+    {
+        id: 2,
+        agendamentoId: 2,
+        pacienteId: 2,
+        profissionalId: 2,
+        dataHora: '2026-01-25T14:00:00',
+        status: 'Finalizado',
+        queixaPrincipal: 'Palpitações esporádicas.',
+        historiaDoencaAtual: 'Paciente relata episódios de palpitações associados a estresse.',
+        antecedentes: 'Nega comorbidades.',
+        sinaisVitais: {
+            pa: '120x80 mmHg',
+            temp: '36.2°C',
+            fc: '88 bpm',
+            fr: '16 irpm',
+            spo2: '99%'
+        },
+        evolucao: 'Pulsos simétricos, ritmo cardíaco regular em 2 tempos.',
+        diagnostico: { cid: 'R00', descricao: 'Anormalidades do batimento cardíaco' },
+        conduta: 'Solicitado ECG e Holter.',
+        prescricao: 'Nenhuma medicação no momento.',
+        observacoes: 'Manter acompanhamento.',
+        assinatura: 'Dra. Fernanda Lima'
+    }
+];
