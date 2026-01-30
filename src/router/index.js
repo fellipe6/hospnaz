@@ -1,6 +1,7 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { AuthService } from '@/service/AuthService';
 import { createRouter, createWebHistory } from 'vue-router';
+import adminRoutes from './admin.routes';
 import almoxarifadoRoutes from './almoxarifado.routes';
 import financeiroRoutes from './financeiro.routes';
 import pepRoutes from './pep.routes';
@@ -17,6 +18,7 @@ const router = createRouter({
                 ...almoxarifadoRoutes,
                 ...financeiroRoutes,
                 ...pepRoutes,
+                ...adminRoutes,
                 {
                     path: '/',
                     name: 'dashboard',

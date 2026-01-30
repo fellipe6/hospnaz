@@ -1,4 +1,5 @@
 <script setup>
+import { DocumentService } from '@/service/DocumentService';
 import { PepService } from '@/service/PepService';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, ref } from 'vue';
@@ -8,6 +9,7 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 const pepService = new PepService();
+const documentService = new DocumentService();
 
 const record = ref({
     paciente: {},
@@ -20,11 +22,14 @@ const record = ref({
 const evolucoes = ref([]);
 const sinaisVitaisHistory = ref([]);
 const anexos = ref([]);
+const clinicalDocuments = ref([]);
 const historicoGeral = ref([]);
 const loading = ref(true);
 const saving = ref(false);
 
 const activeTab = ref(0);
+const previewVisible = ref(false);
+const selectedDocument = ref(null);
 
 onMounted(async () => {
     const id = route.params.id;
@@ -34,6 +39,7 @@ onMounted(async () => {
             evolucoes.value = await pepService.getEvolucoes(id);
             sinaisVitaisHistory.value = await pepService.getSinaisVitais(id);
             anexos.value = await pepService.getAnexos(id);
+            clinicalDocuments.value = await documentService.getDocumentsByPep(id);
             
             if (record.value.pacienteId) {
                 historicoGeral.value = await pepService.getHistorialGeral(record.value.pacienteId);
@@ -46,6 +52,51 @@ onMounted(async () => {
         }
     }
 });
+
+const clinicalInsights = computed(() => {
+    const insights = [];
+    if (historicoGeral.value.length > 2) {
+        insights.push({ label: 'Recorrente', severity: 'warn', icon: 'pi pi-sync', tooltip: 'Paciente com mais de 2 atendimentos anteriores.' });
+    }
+    if (record.value.paciente?.alergias && record.value.paciente.alergias !== 'Nenhuma') {
+        insights.push({ label: 'Risco: Alergia', severity: 'danger', icon: 'pi pi-exclamation-triangle', tooltip: record.value.paciente.alergias });
+    }
+    
+    // Check if last visit was less than 7 days ago
+    if (historicoGeral.value.length > 1) {
+        const lastVisit = new Date(historicoGeral.value[1].dataHora);
+        const diff = (new Date() - lastVisit) / (1000 * 60 * 60 * 24);
+        if (diff < 7) {
+            insights.push({ label: 'Frequente', severity: 'info', icon: 'pi pi-history', tooltip: 'Último atendimento há menos de 7 dias.' });
+        }
+    }
+    return insights;
+});
+
+const viewDocument = (doc) => {
+    selectedDocument.value = {
+        ...doc,
+        pacienteNome: record.value.paciente?.nome,
+        profissionalNome: record.value.profissional?.nome || 'Dr. Ricardo Santos'
+    };
+    previewVisible.value = true;
+};
+
+const generateNewDocument = async (tipo) => {
+    let conteudo = '';
+    if (tipo === 'Prescrição') conteudo = record.value.prescricao || 'Nenhuma medicação prescrita.';
+    else if (tipo === 'Atestado Médico') conteudo = `Atesto que o(a) paciente ${record.value.paciente?.nome} necessita de repouso por 2 dias.`;
+    else conteudo = `Declaro que o(a) paciente ${record.value.paciente?.nome} esteve em consulta nesta data.`;
+
+    const doc = await documentService.generateDocument({
+        pepId: record.value.id,
+        pacienteId: record.value.pacienteId,
+        tipo,
+        conteudo
+    });
+    clinicalDocuments.value.push(doc);
+    toast.add({ severity: 'success', summary: 'Sucesso', detail: `${tipo} gerado com sucesso.` });
+};
 
 const calculatedAge = computed(() => {
     if (!record.value.paciente?.dataNascimento) return '---';
@@ -119,6 +170,16 @@ const isReadOnly = () => record.value.status === 'Finalizado';
                         <div class="flex items-center gap-3 mb-1">
                             <h1 class="text-xl font-bold m-0">{{ record.paciente?.nome || 'Carregando...' }}</h1>
                             <Tag :value="record.status" :severity="record.status === 'Finalizado' ? 'success' : 'warn'" />
+                            
+                            <!-- 💡 Inteligência Visual: Alertas e Insights -->
+                            <template v-for="insight in clinicalInsights" :key="insight.label">
+                                <Tag :severity="insight.severity" class="px-2" v-tooltip.top="insight.tooltip">
+                                    <div class="flex items-center gap-1">
+                                        <i :class="insight.icon" style="font-size: 0.8rem"></i>
+                                        <span>{{ insight.label }}</span>
+                                    </div>
+                                </Tag>
+                            </template>
                         </div>
                         <div class="flex gap-4 text-sm text-muted-color">
                             <span><i class="pi pi-id-card mr-1"></i> {{ record.paciente?.cpf }}</span>
@@ -145,7 +206,8 @@ const isReadOnly = () => record.value.status === 'Finalizado';
                             <Tab value="3"><i class="pi pi-info-circle mr-2"></i>Diagnóstico</Tab>
                             <Tab value="4"><i class="pi pi-prescription mr-2"></i>Prescrição</Tab>
                             <Tab value="5"><i class="pi pi-paperclip mr-2"></i>Anexos</Tab>
-                            <Tab value="6"><i class="pi pi-history mr-2"></i>Histórico Geral</Tab>
+                            <Tab value="6"><i class="pi pi-file mr-2"></i>Documentos</Tab>
+                            <Tab value="7"><i class="pi pi-history mr-2"></i>Histórico Geral</Tab>
                         </TabList>
                         
                         <TabPanels>
@@ -327,8 +389,41 @@ const isReadOnly = () => record.value.status === 'Finalizado';
                                 </div>
                             </TabPanel>
 
-                            <!-- 📜 Histórico do Paciente (Timeline Geral) -->
+                            <!-- 📜 Documentos Clínica -->
                             <TabPanel value="6">
+                                <div class="p-4">
+                                    <div class="flex justify-between items-center mb-6">
+                                        <div class="text-lg font-bold">Documentos Emitidos ( Blueprint )</div>
+                                        <div class="flex gap-2">
+                                            <Button label="Prescrição" icon="pi pi-prescription" size="small" outlined @click="generateNewDocument('Prescrição')" />
+                                            <Button label="Atestado" icon="pi pi-file" size="small" outlined @click="generateNewDocument('Atestado Médico')" />
+                                            <Button label="Declaração" icon="pi pi-file-o" size="small" outlined @click="generateNewDocument('Declaração')" />
+                                        </div>
+                                    </div>
+                                    
+                                    <DataTable :value="clinicalDocuments" stripedRows>
+                                        <Column field="tipo" header="Tipo de Documento"></Column>
+                                        <Column field="dataHora" header="Data/Hora">
+                                            <template #body="slotProps">
+                                                {{ new Date(slotProps.data.dataHora).toLocaleString('pt-BR') }}
+                                            </template>
+                                        </Column>
+                                        <Column field="status" header="Status">
+                                            <template #body="slotProps">
+                                                <Tag :value="slotProps.data.status" severity="success" />
+                                            </template>
+                                        </Column>
+                                        <Column header="Visualizar">
+                                            <template #body="slotProps">
+                                                <Button icon="pi pi-external-link" text rounded @click="viewDocument(slotProps.data)" />
+                                            </template>
+                                        </Column>
+                                    </DataTable>
+                                </div>
+                            </TabPanel>
+
+                            <!-- 📜 Histórico do Paciente (Timeline Geral) -->
+                            <TabPanel value="7">
                                 <div class="p-4">
                                     <div class="text-lg font-bold mb-6">Linha do Tempo Clínica (Longitudinal)</div>
                                     

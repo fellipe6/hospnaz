@@ -1,6 +1,6 @@
 <script setup>
 import { AuthService } from '@/service/AuthService';
-import { ROLE_ADMIN, ROLE_DOCTOR } from '@/service/mock/usuarios.mock';
+import { ROLE_ADMIN, ROLE_MEDICO } from '@/service/mock/usuarios.mock';
 import { computed, ref } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
 
@@ -15,7 +15,7 @@ const fullModel = ref([
                 label: 'Dashboard',
                 icon: 'pi pi-fw pi-home',
                 to: '/',
-                roles: [ROLE_ADMIN, ROLE_DOCTOR]
+                roles: [ROLE_ADMIN, ROLE_MEDICO]
             }
         ]
     },
@@ -26,7 +26,7 @@ const fullModel = ref([
                 label: 'Pacientes',
                 icon: 'pi pi-fw pi-user-plus',
                 to: '/pages/patients',
-                roles: [ROLE_ADMIN, ROLE_DOCTOR]
+                roles: [ROLE_ADMIN, ROLE_MEDICO]
             },
             {
                 label: 'Empresas',
@@ -38,13 +38,13 @@ const fullModel = ref([
                 label: 'Agendamento',
                 icon: 'pi pi-fw pi-calendar',
                 to: '/pages/scheduling',
-                roles: [ROLE_ADMIN, ROLE_DOCTOR]
+                roles: [ROLE_ADMIN, ROLE_MEDICO]
             },
             {
                 label: 'PEP (Prontuário)',
                 icon: 'pi pi-fw pi-copy',
                 to: '/pep',
-                roles: [ROLE_ADMIN, ROLE_DOCTOR]
+                roles: [ROLE_ADMIN, ROLE_MEDICO]
             }
         ]
     },
@@ -68,6 +68,15 @@ const fullModel = ref([
             { label: 'Lançamentos', icon: 'pi pi-fw pi-dollar', to: '/financeiro/lancamentos', roles: [ROLE_ADMIN] },
             { label: 'Centros de Custo', icon: 'pi pi-fw pi-sitemap', to: '/financeiro/centros-custo', roles: [ROLE_ADMIN] },
             { label: 'Relatórios', icon: 'pi pi-fw pi-file-pdf', to: '/financeiro/relatorios', roles: [ROLE_ADMIN] }
+        ]
+    },
+    {
+        label: 'Governança e Gestão',
+        roles: [ROLE_ADMIN],
+        items: [
+            { label: 'Gestão de Usuários', icon: 'pi pi-fw pi-users', to: '/admin/usuarios', roles: [ROLE_ADMIN] },
+            { label: 'Trilha de Auditoria', icon: 'pi pi-fw pi-shield', to: '/admin/auditoria', roles: [ROLE_ADMIN] },
+            { label: 'Indicadores HIS', icon: 'pi pi-fw pi-chart-line', to: '/admin/indicadores', roles: [ROLE_ADMIN] }
         ]
     }
 ]);
