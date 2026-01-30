@@ -1,6 +1,7 @@
 <script setup>
 import { ClinicoService } from '@/service/ClinicoService';
 import { PatientService } from '@/service/PatientService';
+import { simulacaoService } from '@/service/SimulacaoService';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -13,6 +14,8 @@ const clinicoService = new ClinicoService();
 const patient = ref(null);
 const loading = ref(true);
 const saving = ref(false);
+const showSummary = ref(false);
+const summaryId = ref(null);
 
 const evolution = ref('');
 const selectedCid = ref(null);
@@ -46,16 +49,20 @@ const saveAttendance = async () => {
         pacienteNome: patient.value.name,
         evolucao: evolution.value,
         cid: selectedCid.value,
-        prescricao: prescriptionItems.value
+        prescricao: prescriptionItems.value.filter(i => i.medicamento)
     };
     
-    await clinicoService.saveAtendimento(data);
+    const result = simulacaoService.registrarAtendimento(data);
+    summaryId.value = result.id;
     
     setTimeout(() => {
-        toast.add({ severity: 'success', summary: 'Atendimento Salvo', detail: 'Encaminhando para dispensação...', life: 3000 });
         saving.value = false;
-        router.push('/farmacia/prescricoes'); // Simula fluxo contínuo para farmácia
-    }, 1500);
+        showSummary.value = true;
+    }, 1000);
+};
+
+const finishFlow = () => {
+    router.push('/farmacia/prescricoes');
 };
 
 const goBack = () => router.back();
@@ -196,6 +203,37 @@ const getRiskSeverity = (alergias) => {
                 </div>
             </div>
         </div>
+
+        <!-- Attendance Summary Dialog -->
+        <Dialog v-model:visible="showSummary" header="Atendimento Finalizado" :modal="true" :style="{ width: '450px' }" :closable="false">
+            <div class="flex flex-col items-center gap-4 py-4">
+                <i class="pi pi-check-circle text-6xl text-success"></i>
+                <div class="text-center">
+                    <p class="font-bold text-xl mb-2">Protocolo #{{ summaryId }}</p>
+                    <p class="m-0 text-muted-color">O atendimento para <b>{{ patient.name }}</b> foi concluído com sucesso e assinado digitalmente.</p>
+                </div>
+                
+                <div class="w-full bg-surface-50 dark:bg-surface-800 p-4 rounded-lg border border-dashed text-sm">
+                    <div class="flex justify-between mb-2">
+                        <span>Fluxo de Farmácia:</span>
+                        <Tag value="Sincronizado" severity="success" size="small" />
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span>Prontuário 360º:</span>
+                        <Tag value="Atualizado" severity="success" size="small" />
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Trilha de Auditoria:</span>
+                        <Tag value="Registrado" severity="info" size="small" />
+                    </div>
+                </div>
+            </div>
+            <template #footer>
+                <div class="flex justify-center w-full">
+                    <Button label="Ir para Fila de Farmácia" icon="pi pi-box" @click="finishFlow" class="w-full" />
+                </div>
+            </template>
+        </Dialog>
     </div>
 </template>
 

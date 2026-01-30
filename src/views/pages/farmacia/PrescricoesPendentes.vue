@@ -1,15 +1,18 @@
 <script setup>
 import { FarmaciaService } from '@/service/FarmaciaService';
+import { simulacaoService } from '@/service/SimulacaoService';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const farmaciaService = new FarmaciaService();
 const router = useRouter();
 const prescricoes = ref([]);
 const loading = ref(true);
 
 onMounted(async () => {
-    prescricoes.value = await farmaciaService.getPrescricoesPendentes();
+    // Merge static mocks from service with session mocks
+    const staticPrescricoes = await new FarmaciaService().getPrescricoesPendentes();
+    const sessionPrescricoes = simulacaoService.getPrescricoesPendentes();
+    prescricoes.value = [...sessionPrescricoes, ...staticPrescricoes];
     loading.value = false;
 });
 

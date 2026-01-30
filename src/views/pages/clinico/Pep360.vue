@@ -2,6 +2,7 @@
 import { FarmaciaService } from '@/service/FarmaciaService';
 import { PatientService } from '@/service/PatientService';
 import { Pep360Service } from '@/service/Pep360Service';
+import { simulacaoService } from '@/service/SimulacaoService';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -13,13 +14,15 @@ const farmaciaService = new FarmaciaService();
 const patient = ref(null);
 const history = ref(null);
 const estoque = ref([]);
+const timeline = ref([]);
 const loading = ref(true);
 
 onMounted(async () => {
     const id = route.params.id;
     patient.value = await PatientService.getPatientById(id);
     history.value = await pep360Service.getHistory360(id);
-    estoque.value = await farmaciaService.getEstoque();
+    estoque.value = simulacaoService.getInventario();
+    timeline.value = [...simulacaoService.getTimeline()];
     loading.value = false;
 });
 
@@ -107,7 +110,7 @@ const getStockSeverity = (item) => {
                             <!-- Timeline Tab -->
                             <TabPanel value="0">
                                 <div class="p-6">
-                                    <Timeline :value="history.timeline">
+                                    <Timeline :value="timeline">
                                         <template #marker="slotProps">
                                             <span class="flex w-10 h-10 items-center justify-center rounded-full z-10 shadow-sm" :class="`bg-${slotProps.item.color}-500 text-white`">
                                                 <i :class="slotProps.item.icon"></i>

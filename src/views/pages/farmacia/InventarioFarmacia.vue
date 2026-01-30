@@ -1,13 +1,12 @@
 <script setup>
-import { InventarioFarmaciaService } from '@/service/InventarioFarmaciaService';
+import { simulacaoService } from '@/service/SimulacaoService';
 import { onMounted, ref } from 'vue';
 
-const inventarioService = new InventarioFarmaciaService();
 const inventario = ref([]);
 const loading = ref(true);
 
 onMounted(async () => {
-    inventario.value = await inventarioService.getInventario();
+    inventario.value = simulacaoService.getInventario();
     loading.value = false;
 });
 
@@ -51,7 +50,10 @@ const getValidadeSeverity = (validade) => {
             <Column field="nome" header="Medicamento" sortable style="min-width: 15rem">
                 <template #body="slotProps">
                     <div class="flex flex-col">
-                        <span class="font-bold text-lg">{{ slotProps.data.nome }}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-lg">{{ slotProps.data.nome }}</span>
+                            <Tag v-if="slotProps.data.lastModified" value="ALTERAÇÃO RECENTE" severity="info" size="small" />
+                        </div>
                         <small class="text-muted-color">{{ slotProps.data.categoria }}</small>
                     </div>
                 </template>

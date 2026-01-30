@@ -1,5 +1,6 @@
 <script setup>
 import { FarmaciaService } from '@/service/FarmaciaService';
+import { simulacaoService } from '@/service/SimulacaoService';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -7,26 +8,42 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
-const farmaciaService = new FarmaciaService();
 
 const prescricao = ref(null);
+const inventario = ref([]);
 const loading = ref(true);
 const saving = ref(false);
 
+const lotesSelecionados = ref({}); // { medId: loteNumero }
+
 onMounted(async () => {
     const id = route.params.id;
-    prescricao.value = await farmaciaService.getPrescricaoById(id);
+    // Try session service first
+    prescricao.value = simulacaoService.getPrescricaoById(id) || await new FarmaciaService().getPrescricaoById(id);
+    inventario.value = simulacaoService.getInventario();
     loading.value = false;
 });
 
-const dispensarAtivado = (item) => {
-    return item.dispensado < item.prescrito;
+const getLotesForItem = (itemName) => {
+    const med = inventario.value.find(m => m.nome.includes(itemName) || itemName.includes(m.nome));
+    return med ? med.lotes : [];
+};
+
+const confirmarItem = (item) => {
+    const lote = lotesSelecionados.value[item.nome];
+    if (!lote) {
+        toast.add({ severity: 'warn', summary: 'Atenção', detail: 'Selecione um lote para o medicamento', life: 3000 });
+        return;
+    }
+    
+    simulacaoService.dispensarMedicamento(prescricao.value.id, item.nome, lote, item.prescrito - item.dispensado);
+    toast.add({ severity: 'success', summary: 'Item Conferido', detail: `${item.nome} dispensado com sucesso.`, life: 2000 });
 };
 
 const dispensarTotal = () => {
     saving.value = true;
     setTimeout(() => {
-        toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Dispensação concluída com sucesso', life: 3000 });
+        toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Fluxo Assistencial Concluído! Estoque atualizado.', life: 4000 });
         router.push('/farmacia/prescricoes');
     }, 1000);
 };
@@ -114,9 +131,9 @@ const goBack = () => router.push('/farmacia/prescricoes');
                         <Column header="Conferência">
                             <template #body="slotProps">
                                 <div class="flex items-center gap-2">
-                                    <template v-if="dispensarAtivado(slotProps.data)">
-                                        <InputText placeholder="Lote" class="p-inputtext-sm w-24" />
-                                        <Button icon="pi pi-check" severity="success" text rounded v-tooltip.top="'Confirmar'" />
+                                    <template v-if="slotProps.data.dispensado < slotProps.data.prescrito">
+                                        <Select v-model="lotesSelecionados[slotProps.data.nome]" :options="getLotesForItem(slotProps.data.nome)" optionLabel="numero" optionValue="numero" placeholder="Lote" class="w-32" />
+                                        <Button icon="pi pi-check" severity="success" text rounded v-tooltip.top="'Confirmar'" @click="confirmarItem(slotProps.data)" />
                                     </template>
                                     <Tag v-else value="DISPENSADO" severity="success" />
                                 </div>
