@@ -1,5 +1,6 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import almoxarifadoRoutes from './almoxarifado.routes';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -8,6 +9,7 @@ const router = createRouter({
             path: '/',
             component: AppLayout,
             children: [
+                ...almoxarifadoRoutes,
                 {
                     path: '/',
                     name: 'dashboard',

@@ -178,6 +178,16 @@ const model = ref([
         ]
     },
     {
+        label: 'Almoxarifado',
+        items: [
+            { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/pages/almoxarifado/dashboard' },
+            { label: 'Produtos', icon: 'pi pi-fw pi-box', to: '/pages/almoxarifado/produtos' },
+            { label: 'Movimentações', icon: 'pi pi-fw pi-sort-alt', to: '/pages/almoxarifado/movimentacoes' },
+            { label: 'Fornecedores', icon: 'pi pi-fw pi-truck', to: '/pages/almoxarifado/fornecedores' },
+            { label: 'Estoque Crítico', icon: 'pi pi-fw pi-exclamation-circle', to: '/pages/almoxarifado/estoque-minimo' }
+        ]
+    },
+    {
         label: 'Hierarchy',
         icon: 'pi pi-fw pi-align-left',
         path: '/hierarchy',
