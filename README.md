@@ -59,6 +59,7 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 - ✅ Gestão de Lotes e Vencimentos semafórica
 
 ### 🏥 Fluxo Clínico Unificado (E2E)
+- ✅ **PEP 360º (NOVO):** Visão ultra-integrada com Timeline, Farmácia, Exames e Sumário Cognitivo
 - ✅ **Atendimento V2:** Interface otimizada com sinais vitais e CID-10 integrado
 - ✅ **Histórico Longitudinal:** Linha do tempo unificada de toda a jornada do paciente
 - ✅ **Integração Clínica-Farmácia:** Prescrições geram demandas imediatas para dispensação

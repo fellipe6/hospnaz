@@ -352,6 +352,7 @@ function takePhoto() {
                 <Column header="Ações" :exportable="false" style="min-width: 14rem">
                     <template #body="slotProps">
                         <Button icon="pi pi-play" class="mr-2" severity="primary" @click="router.push(`/clinico/atendimento/${slotProps.data.id}`)" v-tooltip.top="'Iniciar Atendimento'" />
+                        <Button icon="pi pi-shield" outlined class="mr-2" severity="warn" @click="router.push(`/clinico/pep360/${slotProps.data.id}`)" v-tooltip.top="'PEP 360º (Visão Integrada)'" />
                         <Button icon="pi pi-clock" outlined class="mr-2" severity="info" @click="router.push(`/clinico/historico/${slotProps.data.id}`)" v-tooltip.top="'Histórico Longitudinal'" />
                         <Button icon="pi pi-eye" outlined rounded class="mr-2" @click="viewPatient(slotProps.data)" v-tooltip.top="'Ficha Cadastral'" />
                         <Button icon="pi pi-pencil" outlined rounded severity="success" @click="editPatient(slotProps.data)" v-tooltip.top="'Editar'" />
