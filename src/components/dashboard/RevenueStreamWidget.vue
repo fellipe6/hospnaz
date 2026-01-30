@@ -11,32 +11,20 @@ function setChartData() {
     const documentStyle = getComputedStyle(document.documentElement);
 
     return {
-        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
         datasets: [
             {
                 type: 'bar',
-                label: 'Subscriptions',
+                label: 'Compras (Entradas)',
                 backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
-                data: [4000, 10000, 15000, 4000],
+                data: [4000, 7000, 5000, 9000, 6000, 8000],
                 barThickness: 32
             },
             {
                 type: 'bar',
-                label: 'Advertising',
-                backgroundColor: documentStyle.getPropertyValue('--p-primary-300'),
-                data: [2100, 8400, 2400, 7500],
-                barThickness: 32
-            },
-            {
-                type: 'bar',
-                label: 'Affiliate',
+                label: 'Consumo (Saídas)',
                 backgroundColor: documentStyle.getPropertyValue('--p-primary-200'),
-                data: [4100, 5200, 3400, 7400],
-                borderRadius: {
-                    topLeft: 8,
-                    topRight: 8
-                },
-                borderSkipped: true,
+                data: [3500, 6000, 4800, 8500, 5500, 7200],
                 barThickness: 32
             }
         ]
@@ -53,7 +41,7 @@ function setChartOptions() {
         aspectRatio: 0.8,
         scales: {
             x: {
-                stacked: true,
+                stacked: false,
                 ticks: {
                     color: textMutedColor
                 },
@@ -63,7 +51,7 @@ function setChartOptions() {
                 }
             },
             y: {
-                stacked: true,
+                stacked: false,
                 ticks: {
                     color: textMutedColor
                 },
@@ -90,7 +78,7 @@ onMounted(() => {
 
 <template>
     <div class="card">
-        <div class="font-semibold text-xl mb-4">Revenue Stream</div>
+        <div class="font-semibold text-xl mb-4">Compras vs Consumo (Almoxarifado)</div>
         <Chart type="bar" :data="chartData" :options="chartOptions" class="h-80" />
     </div>
 </template>

@@ -58,6 +58,17 @@ const fullModel = ref([
             { label: 'Fornecedores', icon: 'pi pi-fw pi-truck', to: '/pages/almoxarifado/fornecedores', roles: [ROLE_ADMIN] },
             { label: 'Estoque Crítico', icon: 'pi pi-fw pi-exclamation-circle', to: '/pages/almoxarifado/estoque-minimo', roles: [ROLE_ADMIN] }
         ]
+    },
+    {
+        label: 'Financeiro',
+        roles: [ROLE_ADMIN],
+        items: [
+            { label: 'Dashboard', icon: 'pi pi-fw pi-chart-line', to: '/financeiro/dashboard', roles: [ROLE_ADMIN] },
+            { label: 'Contas a Pagar', icon: 'pi pi-fw pi-receipt', to: '/financeiro/contas-pagar', roles: [ROLE_ADMIN] },
+            { label: 'Lançamentos', icon: 'pi pi-fw pi-dollar', to: '/financeiro/lancamentos', roles: [ROLE_ADMIN] },
+            { label: 'Centros de Custo', icon: 'pi pi-fw pi-sitemap', to: '/financeiro/centros-custo', roles: [ROLE_ADMIN] },
+            { label: 'Relatórios', icon: 'pi pi-fw pi-file-pdf', to: '/financeiro/relatorios', roles: [ROLE_ADMIN] }
+        ]
     }
 ]);
 

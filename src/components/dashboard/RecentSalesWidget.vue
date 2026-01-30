@@ -1,36 +1,33 @@
 <script setup>
-import { ProductService } from '@/service/ProductService';
+import { MovimentacaoService } from '@/service/almoxarifado/movimentacao.mock';
 import { onMounted, ref } from 'vue';
 
-const products = ref(null);
+const movements = ref(null);
 
-function formatCurrency(value) {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+function formatDate(value) {
+    if (!value) return '';
+    return new Date(value).toLocaleDateString('pt-BR');
 }
 
-onMounted(() => {
-    ProductService.getProductsSmall().then((data) => (products.value = data));
+onMounted(async () => {
+    movements.value = await MovimentacaoService.getMovimentacoesComProdutos();
 });
 </script>
 
 <template>
     <div class="card">
-        <div class="font-semibold text-xl mb-4">Recent Sales</div>
-        <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
-            <Column style="width: 15%" header="Image">
+        <div class="font-semibold text-xl mb-4">Últimas Movimentações (Estoque)</div>
+        <DataTable :value="movements" :rows="5" :paginator="true" responsiveLayout="scroll">
+            <Column field="data" header="Data" :sortable="true" style="width: 25%">
                 <template #body="slotProps">
-                    <img :src="`https://primefaces.org/cdn/primevue/images/product/${slotProps.data.image}`" :alt="slotProps.data.image" width="50" class="shadow" />
+                    {{ formatDate(slotProps.data.data) }}
                 </template>
             </Column>
-            <Column field="name" header="Name" :sortable="true" style="width: 35%"></Column>
-            <Column field="price" header="Price" :sortable="true" style="width: 35%">
+            <Column field="produtoNome" header="Produto" :sortable="true" style="width: 40%"></Column>
+            <Column field="quantidade" header="Qtd" :sortable="true" style="width: 15%"></Column>
+            <Column field="tipo" header="Tipo" :sortable="true" style="width: 20%">
                 <template #body="slotProps">
-                    {{ formatCurrency(slotProps.data.price) }}
-                </template>
-            </Column>
-            <Column style="width: 15%" header="View">
-                <template #body>
-                    <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
+                    <Tag :value="slotProps.data.tipo" :severity="slotProps.data.tipo === 'ENTRADA' ? 'success' : 'warn'" />
                 </template>
             </Column>
         </DataTable>

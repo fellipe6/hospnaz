@@ -29,12 +29,26 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 | **Super Usuário** | `admin@hospnaz.com.br` | `admin123` | Total (Admin) |
 | **Médico** | `medico@hospnaz.com.br` | `medico123` | Pacientes, Agendamento e PEP |
 
+### Módulo Financeiro
+- ✅ **Dashboard Financeiro** com KPIs de despesas e custos 📊
+- ✅ **Contas a Pagar** integrado ao Almoxarifado 🧾
+- ✅ **Lançamentos Detalhados** de custos operacionais
+- ✅ **Centros de Custo** por setor (Farmácia, UTI, etc)
+- ✅ **Relatórios Financeiros** com simulação de exportação
+
 ### Módulo de Almoxarifado
 - ✅ Dashboard com indicadores de estoque (KPIs)
 - ✅ Catálogo de produtos com status visual
 - ✅ Movimentações de Entrada e Saída (Gestão de Fluxo)
 - ✅ Controle automático de Estoque Crítico/Baixo
 - ✅ Gestão de Fornecedores
+
+### Dashboard Principal
+- ✅ Resumo em tempo real de Pacientes e Agendas
+- ✅ Monitoramento de Despesas Mensais
+- ✅ Gráfico de Compras vs Consumo
+- ✅ Lista de últimas movimentações de estoque
+- ✅ Alertas de estoque crítico automática
 
 ### Ambiente de Desenvolvimento
 - 🔒 **HTTPS Habilitado** (Necessário para testar câmera)

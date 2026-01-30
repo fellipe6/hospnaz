@@ -2,6 +2,7 @@ import AppLayout from '@/layout/AppLayout.vue';
 import { AuthService } from '@/service/AuthService';
 import { createRouter, createWebHistory } from 'vue-router';
 import almoxarifadoRoutes from './almoxarifado.routes';
+import financeiroRoutes from './financeiro.routes';
 import pepRoutes from './pep.routes';
 
 const authService = new AuthService();
@@ -14,6 +15,7 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 ...almoxarifadoRoutes,
+                ...financeiroRoutes,
                 ...pepRoutes,
                 {
                     path: '/',
