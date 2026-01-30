@@ -19,19 +19,29 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 ### Módulo PEP (Prontuário Eletrônico)
 - ✅ Lista de atendimentos com filtros
 - ✅ **Prontuário Clínico Avançado** com abas 🫀
-- ✅ **Cabeçalho Clínico Rico** com dados vitais do paciente
+- ✅ **Cabeçalho Clínico Rico** com dados vitais e **Insights Visuais** (Alertas)
 - ✅ **Histórico Longitudinal** (Timeline de atendimentos anteriores)
+- ✅ **Documentos Clínicos:** Emissão de Prescrições, Atestados e Declarações
+- ✅ **Preview Digital:** Visualização de documentos em layout padrão hospitalar
 - ✅ **Evoluções em Linha do Tempo**
 - ✅ **Resumo Clínico Cognitivo** gerado automaticamente
 - ✅ Gestão de Sinais Vitais com alertas visuais
 - ✅ Fluxo de finalização e bloqueio de edição
 
+### 📊 Governança e Inteligência
+- ✅ **Dashboard HIS Executivo:** KPIs estratégicos, fluxo de pacientes e produtividade
+- ✅ **Gestão de Usuários:** Controle visual por perfis (ADMIN, MEDICO, ENFERMAGEM, FINANCEIRO)
+- ✅ **Trilha de Auditoria:** Rastreabilidade total de ações críticas via timeline
+- ✅ **Indicadores Assistenciais:** Gráficos de especialidades, CID-10 e qualidade PEP
+
 ## 🔐 Credenciais de Acesso (Mock)
 
 | Perfil | E-mail | Senha | Acesso |
 | :--- | :--- | :--- | :--- |
-| **Super Usuário** | `admin@hospnaz.com.br` | `admin123` | Total (Admin) |
-| **Médico** | `medico@hospnaz.com.br` | `medico123` | Pacientes, Agendamento e PEP |
+| **Administrador** | `admin@hospnaz.com.br` | `admin123` | Total (Governança + HIS) |
+| **Médico** | `medico@hospnaz.com.br` | `medico123` | PEP, Pacientes e Agendas |
+| **Enfermagem** | `enfermaria@hospnaz.com.br` | `enf123` | Pacientes e Sinais Vitais |
+| **Financeiro** | `financeiro@hospnaz.com.br` | `fin123` | Gestão de Custos e Contas |
 
 ### Módulo Financeiro
 - ✅ **Dashboard Financeiro** com KPIs de despesas e custos 📊
@@ -47,12 +57,12 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 - ✅ Controle automático de Estoque Crítico/Baixo
 - ✅ Gestão de Fornecedores
 
-### Dashboard Principal
+### Dashboard HIS Executivo (Principal)
 - ✅ Resumo em tempo real de Pacientes e Agendas
-- ✅ Monitoramento de Despesas Mensais
-- ✅ Gráfico de Compras vs Consumo
-- ✅ Lista de últimas movimentações de estoque
-- ✅ Alertas de estoque crítico automática
+- ✅ **KPIs Assistenciais:** Tempo médico, pendências e volumes
+- ✅ **Fluxo Operacional:** Gráficos de Entradas vs Altas
+- ✅ **Produtividade:** Ranking de atendimentos por profissional
+- ✅ **Atividade PEP:** Monitoramento de evoluções e documentos em tempo real
 
 ### Ambiente de Desenvolvimento
 - 🔒 **HTTPS Habilitado** (Necessário para testar câmera)
