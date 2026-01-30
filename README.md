@@ -13,11 +13,19 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 - ✅ Máscaras automáticas para CPF, telefone e CEP
 - ✅ **Busca automática de endereço por CEP** (integração com ViaCEP)
 - ✅ **Captura de foto via Webcam** 📸
-- ✅ **Módulo de Agendamento** com calendário interativo
+- ✅ **Agendamento** com calendário interativo
+
+### Módulo de Almoxarifado
+- ✅ Dashboard com indicadores de estoque (KPIs)
+- ✅ Catálogo de produtos com status visual
+- ✅ Movimentações de Entrada e Saída (Gestão de Fluxo)
+- ✅ Controle automático de Estoque Crítico/Baixo
+- ✅ Gestão de Fornecedores
 
 ### Ambiente de Desenvolvimento
 - 🔒 **HTTPS Habilitado** (Necessário para testar câmera)
 - 📦 Configuração automática via script de setup
+- ✒️ Desenvolvido por **fellipe ribeiro nazasoft**
 
 ## 🛠️ Tecnologias
 
