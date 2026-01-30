@@ -12,6 +12,12 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 - ✅ Validação de campos obrigatórios
 - ✅ Máscaras automáticas para CPF, telefone e CEP
 - ✅ **Busca automática de endereço por CEP** (integração com ViaCEP)
+- ✅ **Captura de foto via Webcam** 📸
+- ✅ **Módulo de Agendamento** com calendário interativo
+
+### Ambiente de Desenvolvimento
+- 🔒 **HTTPS Habilitado** (Necessário para testar câmera)
+- 📦 Configuração automática via script de setup
 
 ## 🛠️ Tecnologias
 

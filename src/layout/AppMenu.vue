@@ -156,6 +156,16 @@ const model = ref([
                 to: '/pages/patients'
             },
             {
+                label: 'Empresas',
+                icon: 'pi pi-fw pi-building',
+                to: '/pages/companies'
+            },
+            {
+                label: 'Agendamento',
+                icon: 'pi pi-fw pi-calendar',
+                to: '/pages/scheduling'
+            },
+            {
                 label: 'Not Found',
                 icon: 'pi pi-fw pi-exclamation-circle',
                 to: '/pages/notfound'

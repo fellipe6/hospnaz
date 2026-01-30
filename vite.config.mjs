@@ -6,12 +6,15 @@ import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 
+import basicSsl from '@vitejs/plugin-basic-ssl';
+
 // https://vitejs.dev/config/
 export default defineConfig({
     optimizeDeps: {
         noDiscovery: true
     },
     plugins: [
+        basicSsl(),
         vue(),
         tailwindcss(),
         Components({

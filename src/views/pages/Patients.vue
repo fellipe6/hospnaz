@@ -2,7 +2,7 @@
 import { PatientService } from '@/service/PatientService';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 onMounted(() => {
     PatientService.getPatients().then((data) => (patients.value = data));
@@ -25,11 +25,7 @@ const statuses = ref([
     { label: 'Inativo', value: 'inactive' }
 ]);
 
-const brazilianStates = [
-    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 
-    'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 
-    'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
-];
+const brazilianStates = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
 function openNew() {
     patient.value = {
@@ -171,7 +167,7 @@ function applyZipMask(value) {
 
 async function fetchAddressByCep() {
     const cep = patient.value.address?.zip?.replace(/\D/g, '');
-    
+
     if (!cep || cep.length !== 8) {
         return;
     }
@@ -181,11 +177,11 @@ async function fetchAddressByCep() {
         const data = await response.json();
 
         if (data.erro) {
-            toast.add({ 
-                severity: 'warn', 
-                summary: 'CEP não encontrado', 
-                detail: 'O CEP informado não foi encontrado.', 
-                life: 3000 
+            toast.add({
+                severity: 'warn',
+                summary: 'CEP não encontrado',
+                detail: 'O CEP informado não foi encontrado.',
+                life: 3000
             });
             return;
         }
@@ -199,19 +195,98 @@ async function fetchAddressByCep() {
             zip: patient.value.address.zip // Mantém o CEP formatado
         };
 
-        toast.add({ 
-            severity: 'success', 
-            summary: 'Endereço encontrado', 
-            detail: 'Dados do endereço preenchidos automaticamente.', 
-            life: 3000 
+        toast.add({
+            severity: 'success',
+            summary: 'Endereço encontrado',
+            detail: 'Dados do endereço preenchidos automaticamente.',
+            life: 3000
         });
     } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Não foi possível buscar o endereço. Tente novamente.',
+            life: 3000
+        });
+    }
+}
+// Câmera Logic
+const cameraDialog = ref(false);
+const videoRef = ref(null);
+const canvasRef = ref(null);
+const stream = ref(null);
+
+function openCamera() {
+    console.log("Botão clicado! Abrindo dialog...");
+    cameraDialog.value = true;
+    // O startCamera será chamado pelo @show do Dialog ou watch
+}
+
+async function startCamera() {
+    console.log("Iniciando câmera...");
+    try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error("API de mídia não suportada neste navegador/contexto (use HTTPS ou localhost).");
+        }
+
+        console.log("Solicitando permissão...");
+        const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        console.log("Permissão concedida. Stream:", mediaStream);
+        
+        stream.value = mediaStream;
+        
+        nextTick(() => {
+            const videoEl = videoRef.value || document.querySelector('video'); // Fallback
+            console.log("Tentando vincular stream ao vídeo. Elemento:", videoEl);
+            
+            if (videoEl) {
+                videoEl.srcObject = mediaStream;
+                videoEl.play().catch(e => {
+                    console.error("Erro no play:", e);
+                    toast.add({ severity: 'error', summary: 'Erro no Vídeo', detail: 'Falha ao reproduzir: ' + e.message, life: 5000 });
+                });
+            } else {
+                console.error("Elemento de vídeo não encontrado no DOM!");
+                toast.add({ severity: 'error', summary: 'Erro de Interface', detail: 'Elemento de vídeo não encontrado.', life: 5000 });
+            }
+        });
+
+    } catch (err) {
+        console.error("ERRO CÂMERA DETALHADO:", err);
+        // Mostra a mensagem real do erro para debug
         toast.add({ 
             severity: 'error', 
-            summary: 'Erro', 
-            detail: 'Não foi possível buscar o endereço. Tente novamente.', 
-            life: 3000 
+            summary: 'Erro de Câmera (' + err.name + ')', 
+            detail: err.message || 'Erro desconhecido', 
+            life: 8000 
         });
+    }
+}
+
+function stopCamera() {
+    if (stream.value) {
+        stream.value.getTracks().forEach(track => track.stop());
+        stream.value = null;
+    }
+}
+
+function takePhoto() {
+    if (videoRef.value && canvasRef.value) {
+        const video = videoRef.value;
+        const canvas = canvasRef.value;
+        const context = canvas.getContext('2d');
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const photoData = canvas.toDataURL('image/png');
+        patient.value.image = photoData;
+        
+        stopCamera();
+        cameraDialog.value = false;
+        
+        toast.add({ severity: 'success', summary: 'Foto capturada', detail: 'Imagem salva!', life: 3000 });
     }
 }
 </script>
@@ -280,6 +355,33 @@ async function fetchAddressByCep() {
 
         <Dialog v-model:visible="patientDialog" :style="{ width: '650px' }" header="Dados do Paciente" :modal="true">
             <div class="flex flex-col gap-6">
+                <!-- Foto do Paciente -->
+                <div class="flex flex-col items-center gap-4 mb-4">
+                    <div class="relative w-40 h-52 border rounded-lg bg-surface-50 overflow-hidden flex items-center justify-center">
+                        <img 
+                            v-if="patient.image" 
+                            :src="patient.image" 
+                            class="w-full h-full object-cover" 
+                            alt="Foto do Paciente"
+                        />
+                        <Avatar 
+                            v-else
+                            :label="patient.name?.charAt(0) || 'P'" 
+                            class="w-full h-full text-5xl bg-transparent" 
+                            shape="square" 
+                            :style="{ color: '#2a1261' }"
+                        />
+                        <Button 
+                            icon="pi pi-camera" 
+                            rounded 
+                            severity="secondary" 
+                            class="absolute -bottom-3 -right-3 w-10 h-10 shadow-md z-10" 
+                            @click="openCamera"
+                            v-tooltip="'Tirar Foto'"
+                        />
+                    </div>
+                </div>
+
                 <div>
                     <label for="name" class="block font-bold mb-3">Nome Completo *</label>
                     <InputText id="name" v-model.trim="patient.name" required="true" autofocus :invalid="submitted && !patient.name" fluid />
@@ -289,26 +391,12 @@ async function fetchAddressByCep() {
                 <div class="grid grid-cols-12 gap-4">
                     <div class="col-span-6">
                         <label for="cpf" class="block font-bold mb-3">CPF *</label>
-                        <InputText 
-                            id="cpf" 
-                            v-model="patient.cpf" 
-                            @input="patient.cpf = applyCpfMask($event.target.value)"
-                            required="true" 
-                            :invalid="submitted && !patient.cpf" 
-                            placeholder="000.000.000-00"
-                            fluid 
-                        />
+                        <InputText id="cpf" v-model="patient.cpf" @input="patient.cpf = applyCpfMask($event.target.value)" required="true" :invalid="submitted && !patient.cpf" placeholder="000.000.000-00" fluid />
                         <small v-if="submitted && !patient.cpf" class="text-red-500">CPF é obrigatório.</small>
                     </div>
                     <div class="col-span-6">
                         <label for="dateOfBirth" class="block font-bold mb-3">Data de Nascimento *</label>
-                        <DatePicker 
-                            id="dateOfBirth" 
-                            v-model="patient.dateOfBirth" 
-                            dateFormat="dd/mm/yy"
-                            :invalid="submitted && !patient.dateOfBirth"
-                            fluid 
-                        />
+                        <DatePicker id="dateOfBirth" v-model="patient.dateOfBirth" dateFormat="dd/mm/yy" :invalid="submitted && !patient.dateOfBirth" fluid />
                         <small v-if="submitted && !patient.dateOfBirth" class="text-red-500">Data de nascimento é obrigatória.</small>
                     </div>
                 </div>
@@ -316,13 +404,7 @@ async function fetchAddressByCep() {
                 <div class="grid grid-cols-12 gap-4">
                     <div class="col-span-6">
                         <label for="phone" class="block font-bold mb-3">Telefone</label>
-                        <InputText 
-                            id="phone" 
-                            v-model="patient.phone"
-                            @input="patient.phone = applyPhoneMask($event.target.value)"
-                            placeholder="(00) 00000-0000"
-                            fluid 
-                        />
+                        <InputText id="phone" v-model="patient.phone" @input="patient.phone = applyPhoneMask($event.target.value)" placeholder="(00) 00000-0000" fluid />
                     </div>
                     <div class="col-span-6">
                         <label for="email" class="block font-bold mb-3">Email</label>
@@ -337,17 +419,10 @@ async function fetchAddressByCep() {
 
                 <div class="border-t pt-4">
                     <h5 class="mb-4">Endereço</h5>
-                    
+
                     <div class="mb-4">
                         <label for="zip" class="block font-bold mb-3">CEP</label>
-                        <InputText 
-                            id="zip" 
-                            v-model="patient.address.zip"
-                            @input="patient.address.zip = applyZipMask($event.target.value)"
-                            @blur="fetchAddressByCep"
-                            placeholder="00000-000"
-                            fluid 
-                        />
+                        <InputText id="zip" v-model="patient.address.zip" @input="patient.address.zip = applyZipMask($event.target.value)" @blur="fetchAddressByCep" placeholder="00000-000" fluid />
                     </div>
 
                     <div class="grid grid-cols-12 gap-4 mb-4">
@@ -407,6 +482,20 @@ async function fetchAddressByCep() {
             <template #footer>
                 <Button label="Não" icon="pi pi-times" text @click="deletePatientsDialog = false" />
                 <Button label="Sim" icon="pi pi-check" text @click="deleteSelectedPatients" />
+            </template>
+        </Dialog>
+
+        <!-- Dialog da Câmera -->
+        <Dialog v-model:visible="cameraDialog" header="Tirar Foto" :modal="true" :style="{ width: '500px' }" @show="startCamera" @hide="stopCamera">
+            <div class="flex flex-col items-center gap-4">
+                <div class="relative w-full aspect-video bg-black rounded overflow-hidden">
+                    <video ref="videoRef" autoplay playsinline class="w-full h-full object-cover"></video>
+                </div>
+                <canvas ref="canvasRef" class="hidden"></canvas>
+            </div>
+            <template #footer>
+                <Button label="Cancelar" icon="pi pi-times" text @click="cameraDialog = false" />
+                <Button label="Capturar" icon="pi pi-camera" @click="takePhoto" severity="success" />
             </template>
         </Dialog>
     </div>
