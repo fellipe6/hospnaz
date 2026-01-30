@@ -18,8 +18,12 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 
 ### Módulo PEP (Prontuário Eletrônico)
 - ✅ Lista de atendimentos com filtros
-- ✅ Prontuário detalhado com Sinais Vitais
-- ✅ Seções de Evolução, Diagnóstico (CID-10) e Prescrição
+- ✅ **Prontuário Clínico Avançado** com abas 🫀
+- ✅ **Cabeçalho Clínico Rico** com dados vitais do paciente
+- ✅ **Histórico Longitudinal** (Timeline de atendimentos anteriores)
+- ✅ **Evoluções em Linha do Tempo**
+- ✅ **Resumo Clínico Cognitivo** gerado automaticamente
+- ✅ Gestão de Sinais Vitais com alertas visuais
 - ✅ Fluxo de finalização e bloqueio de edição
 
 ## 🔐 Credenciais de Acesso (Mock)

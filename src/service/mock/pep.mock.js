@@ -46,5 +46,39 @@ export const PEP_MOCK = [
         prescricao: 'Nenhuma medicação no momento.',
         observacoes: 'Manter acompanhamento.',
         assinatura: 'Dra. Fernanda Lima'
+    },
+    {
+        id: 3,
+        agendamentoId: null,
+        pacienteId: 1,
+        profissionalId: 1,
+        dataHora: '2025-10-05T10:00:00',
+        status: 'Finalizado',
+        queixaPrincipal: 'Revisão de medicação.',
+        historiaDoencaAtual: 'Paciente vem para ajuste de dose de anti-hipertensivo.',
+        antecedentes: 'Hipertensa crônica.',
+        sinaisVitais: { pa: '150/95', temp: '36.6', fc: '76', fr: '18', spo2: '98' },
+        evolucao: 'Paciente assintomática, mas com níveis pressóricos elevados hoje.',
+        diagnostico: { cid: 'I10', descricao: 'Hipertensão essencial' },
+        conduta: 'Aumentado dose de Losartana.',
+        prescricao: 'Losartana 100mg/dia.',
+        assinatura: 'Dr. Ricardo Santos'
+    },
+    {
+        id: 4,
+        agendamentoId: null,
+        pacienteId: 1,
+        profissionalId: 2,
+        dataHora: '2025-05-12T15:30:00',
+        status: 'Finalizado',
+        queixaPrincipal: 'Gripe.',
+        historiaDoencaAtual: 'Sintomas gripais há 3 dias.',
+        antecedentes: 'Nega outras queixas.',
+        sinaisVitais: { pa: '120/80', temp: '38.2', fc: '92', fr: '20', spo2: '96' },
+        evolucao: 'Garganta hiperemiada, sem placas.',
+        diagnostico: { cid: 'J06', descricao: 'Infecção aguda das vias aéreas superiores' },
+        conduta: 'Sintomáticos e hidratação.',
+        prescricao: 'Paracetamol 750mg de 6/6h por 3 dias.',
+        assinatura: 'Dra. Fernanda Lima'
     }
 ];

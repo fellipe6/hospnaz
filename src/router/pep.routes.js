@@ -10,7 +10,7 @@ export default [
     {
         path: '/pep/:id',
         name: 'pep-detail',
-        component: () => import('@/views/pages/PepForm.vue'),
+        component: () => import('@/views/pages/PepClinico.vue'),
         meta: {
             breadcrumb: ['PEP', 'Prontuário Eletrônico']
         }
