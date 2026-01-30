@@ -3,6 +3,7 @@ import { AuthService } from '@/service/AuthService';
 import { createRouter, createWebHistory } from 'vue-router';
 import adminRoutes from './admin.routes';
 import almoxarifadoRoutes from './almoxarifado.routes';
+import farmaciaRoutes from './farmacia.routes';
 import financeiroRoutes from './financeiro.routes';
 import pepRoutes from './pep.routes';
 
@@ -19,6 +20,7 @@ const router = createRouter({
                 ...financeiroRoutes,
                 ...pepRoutes,
                 ...adminRoutes,
+                ...farmaciaRoutes,
                 {
                     path: '/',
                     name: 'dashboard',

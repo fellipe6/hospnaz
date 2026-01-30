@@ -50,6 +50,14 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 - ✅ **Centros de Custo** por setor (Farmácia, UTI, etc)
 - ✅ **Relatórios Financeiros** com simulação de exportação
 
+### Módulo de Farmácia Hospitalar
+- ✅ **Dashboard da Farmácia** com KPIs e gráficos de consumo 💊
+- ✅ **Prescrições Pendentes** integradas para separação
+- ✅ **Fluxo de Dispensação Seguro** com conferência de lote e dose
+- ✅ **Estoque da Farmácia** com alertas visuais (Crítico/Atenção)
+- ✅ **Trilha de Movimentações** (Entradas e Saídas)
+- ✅ Gestão de Lotes e Vencimentos
+
 ### Módulo de Almoxarifado
 - ✅ Dashboard com indicadores de estoque (KPIs)
 - ✅ Catálogo de produtos com status visual
