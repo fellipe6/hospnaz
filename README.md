@@ -54,9 +54,15 @@ Sistema de gestão hospitalar desenvolvido com Vue.js e PrimeVue.
 - ✅ **Dashboard da Farmácia** com KPIs e gráficos de consumo 💊
 - ✅ **Prescrições Pendentes** integradas para separação
 - ✅ **Fluxo de Dispensação Seguro** com conferência de lote e dose
-- ✅ **Estoque da Farmácia** com alertas visuais (Crítico/Atenção)
+- ✅ **Inventário Farmacêutico (NOVO):** Gestão detalhada de lotes, validades e estoques críticos
 - ✅ **Trilha de Movimentações** (Entradas e Saídas)
-- ✅ Gestão de Lotes e Vencimentos
+- ✅ Gestão de Lotes e Vencimentos semafórica
+
+### 🏥 Fluxo Clínico Unificado (E2E)
+- ✅ **Atendimento V2:** Interface otimizada com sinais vitais e CID-10 integrado
+- ✅ **Histórico Longitudinal:** Linha do tempo unificada de toda a jornada do paciente
+- ✅ **Integração Clínica-Farmácia:** Prescrições geram demandas imediatas para dispensação
+- ✅ **Baixa Automática:** Dispensação impacta o inventário e gera trilha de auditoria
 
 ### Módulo de Almoxarifado
 - ✅ Dashboard com indicadores de estoque (KPIs)

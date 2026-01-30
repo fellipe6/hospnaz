@@ -71,12 +71,20 @@ const fullModel = ref([
         ]
     },
     {
+        label: 'Prática Clínica',
+        roles: [ROLE_ADMIN, ROLE_MEDICO],
+        items: [
+            { label: 'Lista de Pacientes', icon: 'pi pi-fw pi-users', to: '/pages/patients' },
+            { label: 'Atendimentos Realizados', icon: 'pi pi-fw pi-history', to: '/pep/list' }
+        ]
+    },
+    {
         label: 'Farmácia Hospitalar',
-        roles: [ROLE_ADMIN], // In a real scenario, dedicated roles would be used
+        roles: [ROLE_ADMIN],
         items: [
             { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/farmacia/dashboard' },
             { label: 'Prescrições Pendentes', icon: 'pi pi-fw pi-list', to: '/farmacia/prescricoes' },
-            { label: 'Estoque da Farmácia', icon: 'pi pi-fw pi-box', to: '/farmacia/estoque' },
+            { label: 'Inventário (Lotes/Validade)', icon: 'pi pi-fw pi-box', to: '/farmacia/inventario' },
             { label: 'Movimentações', icon: 'pi pi-fw pi-sort-alt', to: '/farmacia/movimentacoes' }
         ]
     },

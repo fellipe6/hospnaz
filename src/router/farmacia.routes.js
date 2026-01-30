@@ -32,6 +32,14 @@ export default [
         }
     },
     {
+        path: '/farmacia/inventario',
+        name: 'farmacia-inventario',
+        component: () => import('@/views/pages/farmacia/InventarioFarmacia.vue'),
+        meta: {
+            breadcrumb: ['Farmácia', 'Inventário']
+        }
+    },
+    {
         path: '/farmacia/movimentacoes',
         name: 'farmacia-movimentacoes',
         component: () => import('@/views/pages/farmacia/MovimentacoesFarmacia.vue'),
